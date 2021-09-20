@@ -38,7 +38,7 @@ DWORD64 FindPattern( const char* szModule, BYTE* bMask, const char* szMask )
 void AddToLog( const char* fmt, ... )
 {
 	
-	va_list va;
+	/*va_list va;
 	va_start( va, fmt );
 
 	char buff[ 1024 ]{ };
@@ -59,10 +59,33 @@ void AddToLog( const char* fmt, ... )
 
 	OutputDebugStringA( buff );
 	fprintf_s( f, buff );
-	fclose( f );
+	fclose( f );*/
 	
 }
-
+HANDLE hMapFile;
+struct PlayerInfo
+{
+	int feet_x;
+	int feet_y;
+	int head_x;
+	int head_y;
+	int dis;
+	char name[10];
+	char weapon[10];
+};
+struct GlobalInfo 
+{
+	int width;
+	int height;
+	int left;
+	int top;
+	int PlayerCount;
+	PlayerInfo infos[100];
+	GlobalInfo()
+	{
+		memset(this, 0, sizeof(GlobalInfo));
+	}
+};
 void DrawEverything( IDXGISwapChain* pDxgiSwapChain )
 {
 	static bool b = true;
@@ -168,6 +191,14 @@ void DrawEverything( IDXGISwapChain* pDxgiSwapChain )
 
 		render.Initialize( pFontWrapper );
 
+		hMapFile = CreateFileMapping(
+			INVALID_HANDLE_VALUE,
+			NULL,
+			PAGE_READWRITE,
+			0,
+			sizeof(GlobalInfo),
+			"45648a4s5dasdka65d4as5d748asd"
+		);
 		b = false;
 	}
 	else
@@ -175,13 +206,50 @@ void DrawEverything( IDXGISwapChain* pDxgiSwapChain )
 		fix_renderstate();
 
 		render.BeginScene();
-		render.FillRect( 10.f, 10.f, 100.f, 100.f, 0xFFFF1010 );
-		render.OutlineRect( 9.f, 9.f, 501.f, 501.f, -1 );
-		render.DrawLine( XMFLOAT2( 10.f, 50.f ), XMFLOAT2( 25.f, 75.f ), -1 );
-		render.RenderText( L"she been bouncing on my lap lap lap", 10.f, 10.f, -1, false, false );
-		render.RenderText ( L"we are obama gaming.", 10.f, 50.f, -1, false, true );
+		//render.FillRect( 10.f, 10.f, 100.f, 100.f, 0xFFFF1010 );
+		//render.OutlineRect( 9.f, 9.f, 501.f, 501.f, -1 );
+		//render.DrawLine( XMFLOAT2( 10.f, 50.f ), XMFLOAT2( 25.f, 75.f ), -1 );
+		//render.RenderText(L"she been bouncing on my lap lap lap", 10.f, 10.f, -1, false, false);
+		//render.RenderText(L"catjpg on top", 700.f, 600.f, 0xFFFFFFFF, false, true);
+		if (hMapFile != NULL)
+		{
+			LPVOID lpBase1 = MapViewOfFile(
+				hMapFile,
+				FILE_MAP_ALL_ACCESS,
+				0,
+				0,
+				sizeof(GlobalInfo)
+			);
+			if (lpBase1)
+			{
+				GlobalInfo *g = new GlobalInfo();
+				memcpy(g, lpBase1, sizeof(GlobalInfo));
+				if (g->PlayerCount == 0)
+				{
+					render.RenderText(L"Waiting...", 10.f, 50.f, -1, false, true);
+				}
+				for (auto i = 1; i < g->PlayerCount; i++)
+				{
+		
+					render.DrawLine(XMFLOAT2(g->left + g->width / 2.0, g->top), XMFLOAT2(g->left + g->infos[i].head_x, g->top + g->infos[i].head_y), -1);
 
-		render.RenderText(L"catjpg on top", 700.f, 600.f, 0xFFFFFFFF, false, true);
+					auto box_height = g->infos[i].head_y - g->infos[i].feet_y;
+					auto box_width = box_height / 2.5f;
+					auto point1 = XMFLOAT2(g->left + g->infos[i].head_x - box_width / 2.0, g->top + g->infos[i].head_y);
+					auto point2 = XMFLOAT2(g->left + g->infos[i].head_x + box_width / 2.0, g->top + g->infos[i].head_y);
+					auto point3 = XMFLOAT2(g->left + g->infos[i].feet_x + box_width / 2.0, g->top + g->infos[i].feet_y);
+					auto point4 = XMFLOAT2(g->left + g->infos[i].feet_x - box_width / 2.0, g->top + g->infos[i].feet_y);
+
+					render.DrawLine(point1, point2, -1);
+					render.DrawLine(point2, point3, -1);
+					render.DrawLine(point3, point4, -1);
+					render.DrawLine(point4, point1, -1);
+				}
+				delete g;
+				memset(lpBase1, 0, sizeof(GlobalInfo));
+				UnmapViewOfFile(lpBase1);
+			}
+		}
 		render.EndScene();
 	}
 }

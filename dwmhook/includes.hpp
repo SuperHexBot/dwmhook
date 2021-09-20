@@ -19,6 +19,8 @@
 #include <DirectXMath.h>
 #include <DirectXPackedVector.h>
 #include <d3dcompiler.h>
+#include <fstream>
+#include <iostream>
 
 using namespace DirectX;
 
@@ -39,3 +41,4 @@ using namespace DirectX;
 
 #include "MinHook.h"
 #include "save_state.hpp"
+#include "json.hpp"

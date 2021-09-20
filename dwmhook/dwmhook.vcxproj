@@ -133,6 +133,7 @@
     <ClInclude Include="FW1\FW1FontWrapper.h" />
     <ClInclude Include="FW1\FW1Precompiled.h" />
     <ClInclude Include="includes.hpp" />
+    <ClInclude Include="json.hpp" />
     <ClInclude Include="ReflectiveDLLInjection.h" />
     <ClInclude Include="ReflectiveLoader.h" />
     <ClInclude Include="render.hpp" />
