@@ -257,11 +257,22 @@ void DrawEverything( IDXGISwapChain* pDxgiSwapChain )
 						auto point3 = XMFLOAT2(g->left + g->infos[i].feet_x + box_width / 2.0, g->top + g->infos[i].feet_y);
 						auto point4 = XMFLOAT2(g->left + g->infos[i].feet_x - box_width / 2.0, g->top + g->infos[i].feet_y);
 
-						if (point1.x < g->left || point1.y < g->top || point3.x >(g->left + g->width) || point3.y >(g->top + g->height))
+						if (point1.x < g->left || point1.y < g->top || point1.x >(g->left + g->width) || point1.y >(g->top + g->height))
 						{
 							continue;
 						}
-
+						if (point2.x < g->left || point2.y < g->top || point2.x >(g->left + g->width) || point2.y >(g->top + g->height))
+						{
+							continue;
+						}
+						if (point3.x < g->left || point3.y < g->top || point3.x >(g->left + g->width) || point3.y >(g->top + g->height))
+						{
+							continue;
+						}
+						if (point4.x < g->left || point4.y < g->top || point4.x >(g->left + g->width) || point4.y >(g->top + g->height))
+						{
+							continue;
+						}
 						/*Line*/
 						render.DrawLine(XMFLOAT2(g->left + g->width / 2.0, g->top), XMFLOAT2(g->left + g->infos[i].head_x, g->top + g->infos[i].head_y), fun_ARGB(255, 255, 0, 0));
 
