@@ -245,20 +245,26 @@ void DrawEverything( IDXGISwapChain* pDxgiSwapChain )
 					else
 					{
 						char buf[50] = { 0 };
-						sprintf(buf, "¸½½üµÐÈË:%d", g->PlayerCount - 1);
+						sprintf(buf, u8"¸½½üµÐÈË:%d", g->PlayerCount - 1);
 						render.RenderText(buf, g->left + g->width / 2.0, g->top + 50.0f, fun_ARGB(255, 0, 255, 0), false, true);
 					}
 					for (auto i = 1; i < g->PlayerCount; i++)
 					{
-						/*Line*/
-						render.DrawLine(XMFLOAT2(g->left + g->width / 2.0, g->top), XMFLOAT2(g->left + g->infos[i].head_x, g->top + g->infos[i].head_y), fun_ARGB(255, 255, 0, 0));
-
-						auto box_height = g->infos[i].head_y - g->infos[i].feet_y;
+						auto box_height = g->infos[i].feet_y - g->infos[i].head_y;
 						auto box_width = box_height / 2.5f;
 						auto point1 = XMFLOAT2(g->left + g->infos[i].head_x - box_width / 2.0, g->top + g->infos[i].head_y);
 						auto point2 = XMFLOAT2(g->left + g->infos[i].head_x + box_width / 2.0, g->top + g->infos[i].head_y);
 						auto point3 = XMFLOAT2(g->left + g->infos[i].feet_x + box_width / 2.0, g->top + g->infos[i].feet_y);
 						auto point4 = XMFLOAT2(g->left + g->infos[i].feet_x - box_width / 2.0, g->top + g->infos[i].feet_y);
+
+						if (point1.x < g->left || point1.y < g->top || point1.x >(g->left + g->width) || point1.y >(g->top + g->height))
+						{
+							continue;
+						}
+
+						/*Line*/
+						render.DrawLine(XMFLOAT2(g->left + g->width / 2.0, g->top), XMFLOAT2(g->left + g->infos[i].head_x, g->top + g->infos[i].head_y), fun_ARGB(255, 255, 0, 0));
+
 
 						/*Box*/
 						render.DrawLine(point1, point2, fun_ARGB(255, 255, 0, 0));
@@ -267,11 +273,11 @@ void DrawEverything( IDXGISwapChain* pDxgiSwapChain )
 						render.DrawLine(point4, point1, fun_ARGB(255, 255, 0, 0));
 
 						/*Name*/
-						render.RenderText(g->infos[i].name, point1.x, point1.y, fun_ARGB(255, 255, 255, 0), false, true);
-						render.RenderText(g->infos[i].weapon, point1.x, (point1.y + point4.y) / 2, fun_ARGB(255, 0, 255, 255), false, true);
+						render.RenderText(g->infos[i].name, point2.x, point2.y, fun_ARGB(255, 255, 255, 0), false, true);
+						render.RenderText(g->infos[i].weapon, point2.x, (point2.y + point3.y) / 2, fun_ARGB(255, 0, 255, 255), false, true);
 						char buf[20] = { 0 };
-						sprintf(buf, "[¾àÀë:%d m]", g->infos[i].dis);
-						render.RenderText(buf, point1.x, point1.y, fun_ARGB(255, 0, 255, 120), false, true);
+						sprintf(buf, u8"[¾àÀë:%d m]", g->infos[i].dis);
+						render.RenderText(buf, point2.x, point3.y, fun_ARGB(255, 0, 255, 120), false, true);
 					}
 					delete g;
 					memset(lpBase1, 0, sizeof(GlobalInfo));
