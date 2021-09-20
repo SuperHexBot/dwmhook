@@ -102,6 +102,9 @@
     <ClCompile Include="FW1\FW1Precompiled.cpp">
       <Filter>Header Files\FW1</Filter>
     </ClCompile>
+    <ClCompile Include="ReflectiveLoader.cpp">
+      <Filter>Header Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="render.hpp">
@@ -162,6 +165,12 @@
       <Filter>Header Files\FW1</Filter>
     </ClInclude>
     <ClInclude Include="ck.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ReflectiveLoader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ReflectiveDLLInjection.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

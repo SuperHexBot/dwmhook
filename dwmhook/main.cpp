@@ -1,6 +1,6 @@
 #include "includes.hpp"
 #include "render.hpp"
-
+#include "ReflectiveLoader.h"
 ID3D11Device* pD3DXDevice = nullptr;
 ID3D11DeviceContext* pD3DXDeviceCtx = nullptr;
 ID3D11Texture2D* pBackBuffer = nullptr;
@@ -37,7 +37,7 @@ DWORD64 FindPattern( const char* szModule, BYTE* bMask, const char* szMask )
 
 void AddToLog( const char* fmt, ... )
 {
-	/*
+	
 	va_list va;
 	va_start( va, fmt );
 
@@ -60,7 +60,7 @@ void AddToLog( const char* fmt, ... )
 	OutputDebugStringA( buff );
 	fprintf_s( f, buff );
 	fclose( f );
-	*/
+	
 }
 
 void DrawEverything( IDXGISwapChain* pDxgiSwapChain )
