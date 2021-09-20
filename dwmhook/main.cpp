@@ -70,8 +70,8 @@ struct PlayerInfo
 	int head_x;
 	int head_y;
 	int dis;
-	char name[10];
-	char weapon[10];
+	char name[20];
+	char weapon[20];
 };
 struct GlobalInfo 
 {
@@ -86,6 +86,11 @@ struct GlobalInfo
 		memset(this, 0, sizeof(GlobalInfo));
 	}
 };
+unsigned int fun_ARGB(int a, int r, int g, int b)
+{
+	return a << 24 | r << 16 | g << 8 | b;
+}
+#define KEYDOWN(vk_code) ((GetAsyncKeyState(vk_code) & 0x8000) ? 1 : 0)
 void DrawEverything( IDXGISwapChain* pDxgiSwapChain )
 {
 	static bool b = true;
@@ -205,49 +210,73 @@ void DrawEverything( IDXGISwapChain* pDxgiSwapChain )
 	{
 		fix_renderstate();
 
+		static int lastkeydown;
+		static bool NoDraw;
+		if (GetTickCount() - lastkeydown > 1000 && KEYDOWN(VK_F7))
+		{
+			lastkeydown = GetTickCount();
+			NoDraw = !NoDraw;
+		}
 		render.BeginScene();
 		//render.FillRect( 10.f, 10.f, 100.f, 100.f, 0xFFFF1010 );
 		//render.OutlineRect( 9.f, 9.f, 501.f, 501.f, -1 );
 		//render.DrawLine( XMFLOAT2( 10.f, 50.f ), XMFLOAT2( 25.f, 75.f ), -1 );
 		//render.RenderText(L"she been bouncing on my lap lap lap", 10.f, 10.f, -1, false, false);
 		//render.RenderText(L"catjpg on top", 700.f, 600.f, 0xFFFFFFFF, false, true);
-		if (hMapFile != NULL)
+		if (!NoDraw)
 		{
-			LPVOID lpBase1 = MapViewOfFile(
-				hMapFile,
-				FILE_MAP_ALL_ACCESS,
-				0,
-				0,
-				sizeof(GlobalInfo)
-			);
-			if (lpBase1)
+			if (hMapFile != NULL)
 			{
-				GlobalInfo *g = new GlobalInfo();
-				memcpy(g, lpBase1, sizeof(GlobalInfo));
-				if (g->PlayerCount == 0)
+				LPVOID lpBase1 = MapViewOfFile(
+					hMapFile,
+					FILE_MAP_ALL_ACCESS,
+					0,
+					0,
+					sizeof(GlobalInfo)
+				);
+				if (lpBase1)
 				{
-					render.RenderText(L"Waiting...", 10.f, 50.f, -1, false, true);
-				}
-				for (auto i = 1; i < g->PlayerCount; i++)
-				{
-		
-					render.DrawLine(XMFLOAT2(g->left + g->width / 2.0, g->top), XMFLOAT2(g->left + g->infos[i].head_x, g->top + g->infos[i].head_y), -1);
+					GlobalInfo* g = new GlobalInfo();
+					memcpy(g, lpBase1, sizeof(GlobalInfo));
+					if (g->PlayerCount == 0)
+					{
+						render.RenderText(L"Waiting...", 10.f, 50.f, -1, false, true);
+					}
+					else
+					{
+						char buf[50] = { 0 };
+						sprintf(buf, "¸½½üµÐÈË:%d", g->PlayerCount - 1);
+						render.RenderText(buf, g->left + g->width / 2.0, g->top + 50.0f, fun_ARGB(255, 0, 255, 0), false, true);
+					}
+					for (auto i = 1; i < g->PlayerCount; i++)
+					{
+						/*Line*/
+						render.DrawLine(XMFLOAT2(g->left + g->width / 2.0, g->top), XMFLOAT2(g->left + g->infos[i].head_x, g->top + g->infos[i].head_y), fun_ARGB(255, 255, 0, 0));
 
-					auto box_height = g->infos[i].head_y - g->infos[i].feet_y;
-					auto box_width = box_height / 2.5f;
-					auto point1 = XMFLOAT2(g->left + g->infos[i].head_x - box_width / 2.0, g->top + g->infos[i].head_y);
-					auto point2 = XMFLOAT2(g->left + g->infos[i].head_x + box_width / 2.0, g->top + g->infos[i].head_y);
-					auto point3 = XMFLOAT2(g->left + g->infos[i].feet_x + box_width / 2.0, g->top + g->infos[i].feet_y);
-					auto point4 = XMFLOAT2(g->left + g->infos[i].feet_x - box_width / 2.0, g->top + g->infos[i].feet_y);
+						auto box_height = g->infos[i].head_y - g->infos[i].feet_y;
+						auto box_width = box_height / 2.5f;
+						auto point1 = XMFLOAT2(g->left + g->infos[i].head_x - box_width / 2.0, g->top + g->infos[i].head_y);
+						auto point2 = XMFLOAT2(g->left + g->infos[i].head_x + box_width / 2.0, g->top + g->infos[i].head_y);
+						auto point3 = XMFLOAT2(g->left + g->infos[i].feet_x + box_width / 2.0, g->top + g->infos[i].feet_y);
+						auto point4 = XMFLOAT2(g->left + g->infos[i].feet_x - box_width / 2.0, g->top + g->infos[i].feet_y);
 
-					render.DrawLine(point1, point2, -1);
-					render.DrawLine(point2, point3, -1);
-					render.DrawLine(point3, point4, -1);
-					render.DrawLine(point4, point1, -1);
+						/*Box*/
+						render.DrawLine(point1, point2, fun_ARGB(255, 255, 0, 0));
+						render.DrawLine(point2, point3, fun_ARGB(255, 255, 0, 0));
+						render.DrawLine(point3, point4, fun_ARGB(255, 255, 0, 0));
+						render.DrawLine(point4, point1, fun_ARGB(255, 255, 0, 0));
+
+						/*Name*/
+						render.RenderText(g->infos[i].name, point1.x, point1.y, fun_ARGB(255, 255, 255, 0), false, true);
+						render.RenderText(g->infos[i].weapon, point1.x, (point1.y + point4.y) / 2, fun_ARGB(255, 0, 255, 255), false, true);
+						char buf[20] = { 0 };
+						sprintf(buf, "[¾àÀë:%d m]", g->infos[i].dis);
+						render.RenderText(buf, point1.x, point1.y, fun_ARGB(255, 0, 255, 120), false, true);
+					}
+					delete g;
+					memset(lpBase1, 0, sizeof(GlobalInfo));
+					UnmapViewOfFile(lpBase1);
 				}
-				delete g;
-				memset(lpBase1, 0, sizeof(GlobalInfo));
-				UnmapViewOfFile(lpBase1);
 			}
 		}
 		render.EndScene();
