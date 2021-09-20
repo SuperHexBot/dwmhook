@@ -257,7 +257,7 @@ void DrawEverything( IDXGISwapChain* pDxgiSwapChain )
 						auto point3 = XMFLOAT2(g->left + g->infos[i].feet_x + box_width / 2.0, g->top + g->infos[i].feet_y);
 						auto point4 = XMFLOAT2(g->left + g->infos[i].feet_x - box_width / 2.0, g->top + g->infos[i].feet_y);
 
-						if (point1.x < g->left || point1.y < g->top || point1.x >(g->left + g->width) || point1.y >(g->top + g->height))
+						if (point1.x < g->left || point1.y < g->top || point3.x >(g->left + g->width) || point3.y >(g->top + g->height))
 						{
 							continue;
 						}
