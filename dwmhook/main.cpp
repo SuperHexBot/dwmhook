@@ -257,19 +257,19 @@ void DrawEverything( IDXGISwapChain* pDxgiSwapChain )
 						auto point3 = XMFLOAT2(g->left + g->infos[i].feet_x + box_width / 2.0, g->top + g->infos[i].feet_y);
 						auto point4 = XMFLOAT2(g->left + g->infos[i].feet_x - box_width / 2.0, g->top + g->infos[i].feet_y);
 
-						if (point1.x < g->left || point1.y < g->top || point1.x >(g->left + g->width) || point1.y >(g->top + g->height))
+						if (point1.x < g->left + 5 || point1.y < g->top + 5 || point1.x >(g->left + g->width -5) || point1.y >(g->top + g->height -5))
 						{
 							continue;
 						}
-						if (point2.x < g->left || point2.y < g->top || point2.x >(g->left + g->width) || point2.y >(g->top + g->height))
+						if (point2.x < g->left + 5 || point2.y < g->top + 5 || point2.x >(g->left + g->width - 5) || point2.y >(g->top + g->height - 5))
 						{
 							continue;
 						}
-						if (point3.x < g->left || point3.y < g->top || point3.x >(g->left + g->width) || point3.y >(g->top + g->height))
+						if (point3.x < g->left + 5 || point3.y < g->top + 5 || point3.x >(g->left + g->width - 5) || point3.y >(g->top + g->height - 5))
 						{
 							continue;
 						}
-						if (point4.x < g->left || point4.y < g->top || point4.x >(g->left + g->width) || point4.y >(g->top + g->height))
+						if (point4.x < g->left + 5 || point4.y < g->top + 5 || point4.x >(g->left + g->width - 5) || point4.y >(g->top + g->height - 5))
 						{
 							continue;
 						}
